@@ -1,0 +1,4 @@
+GITHUB:
+https://github.com/pzajacz/scoutteamapp
+VERCEL:
+https://scoutteamapp.vercel.app/

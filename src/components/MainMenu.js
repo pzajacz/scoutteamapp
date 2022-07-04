@@ -6,8 +6,10 @@ import WalletsPage from "../pages/WalletsPage";
 import ProfileEditPage from "../pages/ProfileEditPage";
 import WalletEditPage from "../pages/WalletEditPage";
 import {useAuth} from "../hooks/useAuth";
+import { useNavigate } from 'react-router-dom';
 
 const MainMenu = () => {
+    const navigate = useNavigate();
     const {logout} = useAuth()
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -76,7 +78,10 @@ const MainMenu = () => {
                   <Link to={"/settings"} element={<ProfileEditPage/>}>Profile settings</Link>
 
               </MenuItem>
-              <MenuItem onClick={logout}>
+              <MenuItem onClick={()=> {
+                  logout();
+                  navigate('/');
+              }}>
                   <ListItemIcon>
                       <Logout fontSize="small"/>
                   </ListItemIcon>

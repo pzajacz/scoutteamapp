@@ -14,11 +14,11 @@ export function AuthContextProvider({children}) {
       }, [setAuthToken,setSessionUser]
     );
   const logout = useCallback(
-    ()=> {
+    () => {
       handleLoginResult({
           token: false,
           user: {}
-        })
+        });
     }, [handleLoginResult]
   )
   return (
