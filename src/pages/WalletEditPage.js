@@ -5,7 +5,7 @@ import {TextField, Button, Typography} from "@mui/material";
 const ProfileEdtPage = () => {
   return (
     <>
-      <Typography variant="h3">Edit wallet</Typography>
+      <Typography variant="h3">Add/Edit wallet</Typography>
       <Formik
         initialValues={{
           title: '',
