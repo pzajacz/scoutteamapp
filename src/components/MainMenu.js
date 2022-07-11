@@ -69,7 +69,7 @@ const MainMenu = () => {
                   <ListItemIcon>
                       <AddCardOutlined fontSize="small" />
                   </ListItemIcon>
-                  <Link to={"/walletedit/:id"} element={<WalletEditPage/>}>Add wallet</Link>
+                  <Link to={"/addwallet"} element={<WalletEditPage/>}>Add wallet</Link>
               </MenuItem>
               <MenuItem>
                   <ListItemIcon>

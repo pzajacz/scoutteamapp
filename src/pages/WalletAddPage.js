@@ -2,20 +2,21 @@ import React from 'react';
 import {Form, useFormik} from "formik";
 import {TextField, Button, Typography} from "@mui/material";
 import {AXIOS_METHOD, doApiCall} from "../hooks/useApi";
+import {useNavigate} from "react-router-dom";
 
 const WalletEdtPage = () => {
-  /*const navigation = useNavigate();*/
+  const navigate = useNavigate();
 
-/*  const nav = ()=> {
-    navigation('/wallets')
-  }*/
+  const nav = ()=> {
+    navigate('/wallets')
+  }
 
   const formik = useFormik({
     initialValues: {
       name: '',
       description: '',
       extra: {
-        'amount': ''
+        goalAmount: '985'
       }
     },
 
@@ -24,6 +25,7 @@ const WalletEdtPage = () => {
       doApiCall(AXIOS_METHOD.PUT, 'wallet',
         (values)=> {
           console.log(values);
+          nav()
         },
         (apiError)=>{
           console.log(apiError);
@@ -35,7 +37,7 @@ const WalletEdtPage = () => {
 
   return (
     <>
-      <Typography variant="h3">Add/Edit wallet</Typography>
+      <Typography variant="h3" mt={3}>Add new wallet</Typography>
       <form onSubmit={formik.handleSubmit}>
 
           <TextField
@@ -45,6 +47,7 @@ const WalletEdtPage = () => {
             variant="standard"
             fullWidth
             margin="dense"
+            type={"text"}
           />
           <TextField
             required
@@ -53,6 +56,7 @@ const WalletEdtPage = () => {
             variant="standard"
             fullWidth
             margin="dense"
+            type={"number"}
           />
           <TextField
             id="description"
@@ -62,6 +66,7 @@ const WalletEdtPage = () => {
             variant="standard"
             fullWidth
             margin="dense"
+            type={"text"}
           />
 
           <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Save wallet</Button>

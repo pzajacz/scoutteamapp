@@ -23,7 +23,10 @@ export function doApiCall(method, uri, onSuccess, onFailure= false, data = {}) {
     method,
     url: `${BASE_URL}${uri}`,
     data,
-    headers: authToken !== false ? {'Authtoken': `Bearer ${authToken}`} : null
+    headers: authToken !== false ? {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json'
+    } : null
   }).then(res=> {
     console.log(res.data);
     onSuccess(res.data);
