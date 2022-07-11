@@ -4,7 +4,7 @@ import {AccountBalanceWalletOutlined, AddCardOutlined, MenuOutlined, Settings, L
 import {Link} from "react-router-dom";
 import WalletsPage from "../pages/WalletsPage";
 import ProfileEditPage from "../pages/ProfileEditPage";
-import WalletEditPage from "../pages/WalletEditPage";
+import WalletEditPage from "../pages/WalletEditPageFormik";
 import {useAuth} from "../hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
 

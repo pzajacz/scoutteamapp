@@ -1,4 +1,5 @@
 import React , {useCallback, useContext, useState} from 'react';
+import {setApiToken} from "./useApi";
 
 const AuthContext = React.createContext();
 AuthContext.displayName = 'AuthContext';
@@ -9,12 +10,14 @@ export function AuthContextProvider({children}) {
 
   const handleLoginResult = useCallback(
 (loginResult) => {
+        setApiToken(loginResult.token);
         setAuthToken(loginResult.token);
         setSessionUser(loginResult.user);
       }, [setAuthToken,setSessionUser]
     );
   const logout = useCallback(
     () => {
+      setApiToken(false);
       handleLoginResult({
           token: false,
           user: {}

@@ -1,43 +1,39 @@
 import React from 'react';
-import {Form, useFormik} from "formik";
+import {Form, Formik} from "formik";
 import {TextField, Button, Typography} from "@mui/material";
 import {AXIOS_METHOD, doApiCall} from "../hooks/useApi";
+import {useNavigate} from "react-router-dom";
 
-const WalletEdtPage = () => {
-  /*const navigation = useNavigate();*/
+const WalletEdtPageFormik = () => {
+  const navigation = useNavigate();
 
 /*  const nav = ()=> {
     navigation('/wallets')
   }*/
 
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      description: '',
-      extra: {
-        'amount': ''
-      }
-    },
-
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values));
-      doApiCall(AXIOS_METHOD.PUT, 'wallet',
-        (values)=> {
-          console.log(values);
-        },
-        (apiError)=>{
-          console.log(apiError);
-        },
-        values
-      )
-    },
-  });
-
   return (
     <>
       <Typography variant="h3">Add/Edit wallet</Typography>
-      <form onSubmit={formik.handleSubmit}>
-
+      <Formik
+        initialValues={{
+          name: '',
+          description: '',
+        }}
+        onSubmit={(values) => {
+          console.log(JSON.stringify(values, null, 2));
+          doApiCall(AXIOS_METHOD.PUT,
+            'wallet',
+            (values)=> {
+              console.log(values);
+            },
+            (apiError)=> {
+              console.log(apiError);
+            },
+            values
+            )
+        }}
+      >
+        <Form>
           <TextField
             required
             id="name"
@@ -46,14 +42,14 @@ const WalletEdtPage = () => {
             fullWidth
             margin="dense"
           />
-          <TextField
+{/*          <TextField
             required
             id="amount"
             label="Amount"
             variant="standard"
             fullWidth
             margin="dense"
-          />
+          />*/}
           <TextField
             id="description"
             label="Description"
@@ -65,10 +61,10 @@ const WalletEdtPage = () => {
           />
 
           <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Save wallet</Button>
-
-      </form>
+        </Form>
+      </Formik>
     </>
   );
 }
 
-export default WalletEdtPage;
+export default WalletEdtPageFormik;
