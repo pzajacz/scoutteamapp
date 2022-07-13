@@ -1,46 +1,45 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Formik, Form, Field} from "formik";
 import {Button, Typography} from "@mui/material";
 import {TextField} from 'formik-mui'
 import {AXIOS_METHOD, doApiCall} from "../hooks/useApi";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams, Link} from "react-router-dom";
 
 const WalletEdtPage = () => {
   const navigate = useNavigate();
-  const nav = ()=>navigate('/wallets');
+  const {id} = useParams();
+  const nav = ()=>navigate(`/wallet/${id}`);
+  const [wallet, setWallet] = useState({});
+
+  useEffect(()=> {
+    doApiCall(AXIOS_METHOD.GET, `/wallet/${id}`, (res)=> {
+      setWallet(res)
+    }, (apiError)=>console.log(apiError));
+  },[id, setWallet]);
 
   return (
     <>
-      <Typography variant="h3" mt={3}>Add new wallet</Typography>
+      <Typography variant="h5" mt={3} mb={3}>Edit <i>{`${wallet.name}`}</i> wallet</Typography>
       <Formik
-        initialValues={{name: '', description: '', extra: {goalAmount:''}}}
+        enableReinitialize
+        initialValues={{
+          description: `${wallet.description}`,
+          extra: {goalAmount: `${wallet.extra?.goalAmount}`}
+        }}
         onSubmit={(values, {setFieldError, setSubmitting}) => {
           setSubmitting(true);
-          doApiCall(AXIOS_METHOD.PUT, 'wallet',
+          doApiCall(AXIOS_METHOD.PATCH, `wallet/${id}`,
             (res)=> {
-              console.log(res);
               nav();
             },
             (apiError)=> {
-              console.log(apiError);
-              setFieldError('password', apiError)
+              setFieldError('description', apiError)
             },
             values
           )
         }}
       >
         <Form>
-          <Field
-            component={TextField}
-            required
-            id="name"
-            name="name"
-            label="Name"
-            variant="standard"
-            fullWidth
-            margin="dense"
-            type={"text"}
-          />
           <Field
             component={TextField}
             required
@@ -65,7 +64,8 @@ const WalletEdtPage = () => {
             type={"text"}
           />
 
-          <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Save wallet</Button>
+          <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Update wallet</Button>
+          <Button component={Link} to={`/wallet/${id}`} fullWidth type="submit" variant="outlined" sx={{mt:3}} color={"warning"}>Cancel</Button>
         </Form>
       </Formik>
     </>

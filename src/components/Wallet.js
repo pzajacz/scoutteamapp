@@ -4,15 +4,14 @@ import {ArrowForwardIosOutlined} from "@mui/icons-material";
 import LinearProgressWithLabel from "./LinearProgress";
 import {Link} from "react-router-dom";
 
-const Wallet = (props) => {
-  const [title, description, balance, id] = props;
+const Wallet = ({title, description, id, goal, balance}) => {
   return (
     <Grid item xs={12}>
       <Card elevation={3}>
         <CardContent>
           <Typography variant="h5" component="div" sx={{mb:1}}>{title}</Typography>
           <Typography variant="body2">{description}</Typography>
-          <LinearProgressWithLabel value={balance} />
+          <LinearProgressWithLabel value={balance} goal={goal}/>
         </CardContent>
         <CardActions>
           <Button component={Link} to={`/wallet/${id}`} size="small" variant={"outlined"} endIcon={<ArrowForwardIosOutlined />}>Details</Button>

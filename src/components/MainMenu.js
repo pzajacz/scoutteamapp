@@ -4,9 +4,9 @@ import {AccountBalanceWalletOutlined, AddCardOutlined, MenuOutlined, Settings, L
 import {Link} from "react-router-dom";
 import WalletsPage from "../pages/WalletsPage";
 import ProfileEditPage from "../pages/ProfileEditPage";
-import WalletEditPage from "../pages/WalletEditPageFormik";
 import {useAuth} from "../hooks/useAuth";
 import { useNavigate } from 'react-router-dom';
+import WalletAddPage from "../pages/WalletAddPage";
 
 const MainMenu = () => {
     const navigate = useNavigate();
@@ -69,7 +69,7 @@ const MainMenu = () => {
                   <ListItemIcon>
                       <AddCardOutlined fontSize="small" />
                   </ListItemIcon>
-                  <Link to={"/addwallet"} element={<WalletEditPage/>}>Add wallet</Link>
+                  <Link to={"/addwallet"} element={<WalletAddPage/>}>Add wallet</Link>
               </MenuItem>
               <MenuItem>
                   <ListItemIcon>

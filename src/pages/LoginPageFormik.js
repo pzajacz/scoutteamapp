@@ -1,14 +1,19 @@
 import React from 'react';
-import {Button, Link, Typography, TextField} from "@mui/material";
+import {Button, Link, Typography} from "@mui/material";
 import {Formik, Form, Field } from 'formik';
-/*import {TextField} from 'formik-mui'*/
+import {TextField} from 'formik-mui'
 import {useAuth} from "../hooks/useAuth";
 import {doApiCall, AXIOS_METHOD} from "../hooks/useApi";
-import {Link as RouterLink} from "react-router-dom";
+import {Link as RouterLink, useNavigate} from "react-router-dom";
 
 
 const LoginPageFormik = () => {
   const {handleLoginResult} = useAuth();
+  const navigate= useNavigate();
+
+  const nav = () => {
+    navigate('/wallets');
+  }
   return (
     <>
       <Typography variant="h3" mb={5} mt={5}>Login</Typography>
@@ -17,8 +22,9 @@ const LoginPageFormik = () => {
         onSubmit={(values, {setFieldError, setSubmitting}) => {
             setSubmitting(true);
             doApiCall(AXIOS_METHOD.POST, 'login',
-              (values)=> {
-                handleLoginResult(values);
+              (res)=> {
+                handleLoginResult(res);
+                nav();
               },
               (apiError)=> {
                 console.log(apiError);
@@ -32,6 +38,7 @@ const LoginPageFormik = () => {
           <Field
             component={TextField}
             id="name"
+            name="name"
             label="Name"
             variant="standard"
             fullWidth
@@ -41,6 +48,7 @@ const LoginPageFormik = () => {
           <Field
             component={TextField}
             id="password"
+            name="password"
             label="Password"
             variant="standard"
             fullWidth
