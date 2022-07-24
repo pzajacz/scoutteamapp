@@ -7,21 +7,16 @@ const WalletsPage = () => {
   const [wallets, setWallets] = useState([]);
 
   useEffect(()=> {
-    doApiCall(AXIOS_METHOD.GET, 'wallets', (res)=> {
-      console.log(res);
-      setWallets(res);
-    },
-    (apiError)=> {
-      console.log(apiError);
-    })
-    console.log(wallets);
-  }, [setWallets])
+    doApiCall(AXIOS_METHOD.GET, 'wallets',
+      (res)=>setWallets(res),
+      (apiError)=>console.log(apiError)
+    )}, [setWallets])
 
   return (
       <Grid container spacing={4}>
-        {wallets ? wallets?.map((wallet, index)=>{
-          return <Wallet data={wallet} title={wallet.name} description={wallet.description} id={wallet.id} balance={wallet.balance} goal={wallet.extra.goalAmount} key={index}/>
-        }) :null }
+        {wallets ? wallets?.map((wallet)=>{
+          return <Wallet data={wallet} title={wallet.name} description={wallet.description} id={wallet.id} balance={wallet.balance} goal={wallet.extra.goalAmount} key={wallet.id}/>
+        }) : null }
       </Grid>
   );
 }

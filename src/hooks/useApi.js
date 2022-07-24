@@ -16,11 +16,6 @@ export function  setApiToken(newToken) {
 }
 
 export function doApiCall(method, uri, onSuccess, onFailure= false, data = undefined) {
-/*  let axiosCall = method === AXIOS_METHOD.POST ? axios.post : axios.get;
-  axiosCall(`${BASE_URL}${uri}`).then(res => {
-    res.data;
-  })*/
-  console.log('axios start');
   axios({
     method,
     url: `${BASE_URL}${uri}`,
@@ -29,10 +24,8 @@ export function doApiCall(method, uri, onSuccess, onFailure= false, data = undef
       'Authorization': `Bearer ${authToken}`
     } : null
   }).then(res=> {
-    //console.log(res.data);
     onSuccess(res.data);
   }).catch(err=> {
-    //console.log(err);
     if(onFailure === false){
       return
     }

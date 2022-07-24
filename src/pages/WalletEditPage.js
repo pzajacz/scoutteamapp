@@ -12,9 +12,9 @@ const WalletEdtPage = () => {
   const [wallet, setWallet] = useState({});
 
   useEffect(()=> {
-    doApiCall(AXIOS_METHOD.GET, `/wallet/${id}`, (res)=> {
-      setWallet(res)
-    }, (apiError)=>console.log(apiError));
+    doApiCall(AXIOS_METHOD.GET, `/wallet/${id}`,
+      (res)=>setWallet(res),
+      (apiError)=>console.log(apiError));
   },[id, setWallet]);
 
   return (
@@ -29,10 +29,9 @@ const WalletEdtPage = () => {
         onSubmit={(values, {setFieldError, setSubmitting}) => {
           setSubmitting(true);
           doApiCall(AXIOS_METHOD.PATCH, `wallet/${id}`,
-            (res)=> {
-              nav();
-            },
+            ()=> { nav(); },
             (apiError)=> {
+              setSubmitting(false);
               setFieldError('description', apiError)
             },
             values

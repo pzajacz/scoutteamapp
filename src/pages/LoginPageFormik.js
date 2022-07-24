@@ -26,10 +26,7 @@ const LoginPageFormik = () => {
                 handleLoginResult(res);
                 nav();
               },
-              (apiError)=> {
-                console.log(apiError);
-                setFieldError('password', apiError)
-              },
+              (apiError)=>setFieldError('password', apiError),
               values
             )
         }}

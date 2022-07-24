@@ -9,7 +9,6 @@ import {
   Typography,
   Link,
   ListItem,
-  ListItemText,
   Box, Button, Dialog, DialogContent, DialogTitle
 } from "@mui/material";
 import LinearProgressWithLabel from "../components/LinearProgress";
@@ -28,24 +27,24 @@ const WalletPage = () => {
   const {id} = useParams();
   const [wallet, setWallet] = useState([]);
   const [transactions, setTransactions] = useState([])
+  const [users, setUsers] = useState([]);
+  const [dialogTr, setDialogTr] = useState(true);
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
   const navigate = useNavigate();
   const nav = () => navigate('/wallets');
+
   useEffect(()=> {
     doApiCall(AXIOS_METHOD.GET, `wallet/${id}`, (res)=> {
-      setWallet(res)
+      setWallet(res);
+      setUsers(res.access);
       doApiCall(AXIOS_METHOD.POST, 'transactions',
-      (res)=>{
-      setTransactions(res.transactions);
-      },
-      (apiError)=> {
-        console.log(apiError);
-      },
+      (res)=>setTransactions(res.transactions),
+      (apiError)=>console.log(apiError),
         {"wallet_id": `${id}`})
     },
     (apiError)=>console.log(apiError));
-  },[setWallet, update]);
+  },[id, update]);
 
   const deleteWallet = () => {
     doApiCall(AXIOS_METHOD.DELETE, `wallet/${id}`,
@@ -53,15 +52,17 @@ const WalletPage = () => {
     )
   }
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const deleteUser = (user) => {
+    doApiCall(AXIOS_METHOD.POST, `wallet/${id}/remove_access`,
+      ()=>setUpdate(!update),
+      (apiError)=>console.log(apiError),
+      {"user_id": user.id}
+    )
+  }
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-  console.log(wallet);
-  console.log(transactions);
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <>
       <Grid item xs={12}>
@@ -73,43 +74,70 @@ const WalletPage = () => {
             <Typography variant="h5" component="div" sx={{mb:1, display: 'flex', flexDirection: 'row', flexWrap: 'wrap'}}>
               {wallet.name}
               <Box className={"buttons"} sx={{ ml: 'auto', alignItems: 'flex-end' }}>
-              <IconButton aria-label="edit" size="small" component={RouterLink} to={`/walletedit/${id}`}>
+              <IconButton aria-label="editwallet" size="small" component={RouterLink} to={`/walletedit/${id}`}>
                 <EditSharp fontSize="inherit" />
               </IconButton>
-              <IconButton aria-label="delete" size="small" onClick={deleteWallet}>
+              <IconButton aria-label="deletewallet" size="small" onClick={deleteWallet}>
                 <DeleteForeverSharpIcon fontSize="inherit" />
               </IconButton>
-              <IconButton aria-label="delete" size="small">
+              <IconButton aria-label="adduser" size="small" onClick={()=> {
+                setDialogTr(false);
+                handleClickOpen();
+              }}>
                 <PersonAddAltSharpIcon fontSize="inherit" />
               </IconButton>
-              <IconButton aria-label="delete" size="small" onClick={handleClickOpen}>
+              <IconButton aria-label="addtransaction" size="small" onClick={()=> {
+                setDialogTr(true);
+                handleClickOpen();
+              }}>
                 <AddCardSharpIcon fontSize="inherit" />
               </IconButton>
             </Box>
             </Typography>
             <Typography variant="body1">{wallet.description}</Typography>
             <Typography variant="h5" mt={3}>Balance: ${wallet.balance}</Typography>
-            <LinearProgressWithLabel value={wallet.balance} goal={wallet.extra?.goalAmount}/>
-            <Divider sx={{mt:2}}/>
-            <Typography variant="body1" mt={2}>Last five transaction:</Typography>
+            <LinearProgressWithLabel value={(wallet.balance)/(wallet.extra?.goalAmount)*100} goal={wallet.extra?.goalAmount}/>
+            <Divider sx={{mt:2}}>Last 5 transaction</Divider>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-              {
-                transactions.map((transaction) => {
+              {transactions ? transactions?.map((transaction) => {
                 return (
                   <ListItem
                   variant="body2"
                   key={transaction.id}
                   disableGutters
                   secondaryAction={`$${transaction.amount}`}>
-                  <ListItemText variant="body2" primary={`${transaction.title}`} />
+                  {transaction.title}
                   </ListItem>
                 )
-              })}
+              }) : null }
+            </List>
+            <Divider sx={{mt:2}}>Users</Divider>
+            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              {users ? users?.map((user, i) => {
+               return  (
+                 <ListItem
+                   variant="body2"
+                   key={user.id}
+                   disableGutters
+                   secondaryAction={ i > 0 ?
+                     <IconButton aria-label="deleteuser" size="small" onClick={()=> {
+                       deleteUser(user);
+                     }}>
+                       <PersonRemoveSharpIcon fontSize="inherit" />
+                     </IconButton> : null
+                   }>
+                   {user.name}
+                 </ListItem>
+               )
+              }) : null }
             </List>
           </CardContent>
         </Card>
       </Grid>
+
       <Dialog open={open} onClose={handleClose}>
+        { dialogTr ?
+          <>
         <DialogTitle>Add new transaction</DialogTitle>
         <DialogContent>
           <Formik
@@ -122,11 +150,11 @@ const WalletPage = () => {
             setSubmitting(true);
             doApiCall(AXIOS_METHOD.PUT, `transactions`,
               (res)=> {
-                console.log('transaction added:'+ res);
                 setOpen(false);
                 setUpdate(!update);
               },
               (apiError)=> {
+                setSubmitting(false);
                 setFieldError('amount', apiError)
               },
               values
@@ -160,6 +188,55 @@ const WalletPage = () => {
             </Form>
           </Formik>
         </DialogContent>
+        </>
+          :
+          <>
+            <DialogTitle>Add new user</DialogTitle>
+            <DialogContent>
+              <Formik
+                initialValues={{
+                  name: ''
+                }}
+                onSubmit={(values, {setFieldError, setSubmitting}) => {
+                  setSubmitting(true);
+                    doApiCall(AXIOS_METHOD.POST, `user/search`,
+                      (res)=> {
+                        doApiCall(AXIOS_METHOD.POST, `wallet/${id}/grant_access`,
+                          (res)=> {
+                            setOpen(false);
+                            setUpdate(!update);
+                          },
+                          (apiError)=> {
+                            setSubmitting(false)
+                            setFieldError('name', apiError)
+                          },
+                          {"user_id": res})
+                      },
+                      (apiError)=> {
+                        setSubmitting(false)
+                        setFieldError('name', apiError)
+                      },
+                      values
+                    )
+                }}>
+                <Form>
+                  <Field
+                    component={TextField}
+                    required
+                    id="name"
+                    name="name"
+                    label="Name"
+                    variant="standard"
+                    fullWidth
+                    margin="dense"
+                    type={"text"}
+                  />
+                  <Button type="submit">Add user</Button>
+                  <Button onClick={handleClose} color={"warning"}>Cancel</Button>
+                </Form>
+              </Formik>
+            </DialogContent>
+          </>}
       </Dialog>
     </>
   );

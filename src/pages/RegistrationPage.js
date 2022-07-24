@@ -13,12 +13,8 @@ const RegistrationPage = () => {
     },
 
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
       doApiCall(AXIOS_METHOD.POST, 'reg',
-        (values)=> {
-          console.log(values);
-          setSuccess(true)
-        },
+        (res)=> setSuccess(true),
         ()=>{},
         values
       )
@@ -27,6 +23,9 @@ const RegistrationPage = () => {
   return (
     <>
       <Typography variant="h3" mb={5} mt={5}>Registration</Typography>
+      <Typography variant="body2" paragraph={true} mt={2} mb={1}>
+        <Link component={RouterLink} to={"/"} style={{ fontWeight: 600 }}>{'< Back to login'}</Link>
+      </Typography>
       {success ?
         <Typography variant="body2" paragraph={true} mt={3} align={'center'}>Registration was successful, please go to <Link component={RouterLink} to={"/"} style={{ fontWeight: 600 }}>Login Page</Link></Typography>
         : null

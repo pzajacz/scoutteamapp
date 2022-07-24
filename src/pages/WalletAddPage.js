@@ -3,7 +3,7 @@ import {Formik, Form, Field} from "formik";
 import {Button, Typography} from "@mui/material";
 import {TextField} from 'formik-mui'
 import {AXIOS_METHOD, doApiCall} from "../hooks/useApi";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const WalletEdtPage = () => {
   const navigate = useNavigate();
@@ -11,18 +11,15 @@ const WalletEdtPage = () => {
 
   return (
     <>
-      <Typography variant="h3" mt={3}>Add new wallet</Typography>
+      <Typography variant="h5" mt={3} mb={3}>Add new wallet</Typography>
       <Formik
         initialValues={{name: '', description: '', extra: {goalAmount:''}}}
         onSubmit={(values, {setFieldError, setSubmitting}) => {
           setSubmitting(true);
           doApiCall(AXIOS_METHOD.PUT, 'wallet',
-            (res)=> {
-              console.log(res);
-              nav();
-            },
+            ( )=> { nav(); },
             (apiError)=> {
-              console.log(apiError);
+              setSubmitting(false);
               setFieldError('password', apiError)
             },
             values
@@ -46,7 +43,7 @@ const WalletEdtPage = () => {
             required
             id="extra.goalAmount"
             name="extra.goalAmount"
-            label="Goal amount"
+            label="Goal amount ($)"
             variant="standard"
             fullWidth
             margin="dense"
@@ -65,7 +62,8 @@ const WalletEdtPage = () => {
             type={"text"}
           />
 
-          <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Save wallet</Button>
+          <Button fullWidth type="submit" variant="outlined" sx={{mt:3}}>Add wallet</Button>
+          <Button component={Link} to={`/wallets`} fullWidth type="submit" variant="outlined" sx={{mt:3}} color={"warning"}>Cancel</Button>
         </Form>
       </Formik>
     </>

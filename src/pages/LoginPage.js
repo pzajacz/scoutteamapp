@@ -21,7 +21,6 @@ const LoginPage = () => {
     },
 
     onSubmit: (values) => {
-      console.log(JSON.stringify(values));
       doApiCall(AXIOS_METHOD.POST, 'login',
         (values)=> {
           handleLoginResult(values);
